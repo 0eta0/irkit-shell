@@ -1,21 +1,26 @@
 #!/bin/bash
 
-if [ $# -lt 1 ]; then
-   exit 1
-fi
-
-META=`curl -s "http://${1}/keys" -d ''`
-CLIENTKEY=${META:16:32}
-
-echo "ClientKey =>"
-echo ${CLIENTKEY}
-
-META=`curl -s -d "clienttoken=${CLIENTKEY}" "https://api.getirkit.com/1/keys"`
-DEVICEID=${META:13:32}
-CLIENTKEY=${META:60:32}
-
-echo "DeviceID  =>"
-echo ${DEVICEID}
-
-echo "ClientKey =>"
-echo ${CLIENTKEY}
+case $1 in
+    "-get" )    echo "getting newest infrared signal."
+                curl -i "http://irkit****.local/messages" -H "X-Requested-With: curl"
+                echo "done.";;
+    "-send")    if [ 1 -lt $# ] ; then
+                    echo "sending infrared signal."
+                    curl -i "http://irkit****.local/messages" -H "X-Requested-With: curl" -d '${2}'
+                    echo "done."
+                else
+                    echo "Invalid argument."
+                fi;;
+    *      )    echo "========== USEAGE =========="
+                echo "<Type of command argument>"
+                echo ""
+                echo "-get"
+                echo "get newest infrared signal from irkit."
+                echo ""
+                echo "-send"
+                echo "send infrared signal of second argument to irkit."
+                echo ""
+                echo "-help"
+                echo "display useage of this command."
+                echo "";;
+esac
